@@ -42,7 +42,7 @@ export default function DayDetail({ info }: { info: DayInfo }) {
         <View style={[s.card, s.holidayCard]}>
           {holidays.map((h) => (
             <View key={h.name} style={s.holidayRow}>
-              <Ionicons name="sparkles" size={16} color={theme.color.text.lunar} />
+              <Ionicons name="sparkles" size={16} color={theme.color.holiday.badgeText} />
               <Text style={s.holidayText}>
                 {h.name}
                 {h.publicHoliday ? '  ·  nghỉ lễ' : ''}
@@ -73,12 +73,12 @@ export default function DayDetail({ info }: { info: DayInfo }) {
               {
                 backgroundColor: dayStar.auspicious
                   ? theme.color.state.goodSoft
-                  : theme.color.bg.elevated,
+                  : theme.color.state.badSoft,
               },
             ]}
           >
             <Ionicons
-              name={dayStar.auspicious ? 'checkmark-circle' : 'remove-circle-outline'}
+              name={dayStar.auspicious ? 'checkmark-circle' : 'alert-circle-outline'}
               size={18}
               color={dayStar.auspicious ? theme.color.state.good : theme.color.state.bad}
             />
@@ -136,7 +136,7 @@ function Item({ label, value, s }: { label: string; value: string; s: any }) {
 const styles = (t: Theme) =>
   StyleSheet.create({
     hero: {
-      borderRadius: t.radius.xl,
+      borderRadius: t.radius.modal,
       padding: t.space.xl,
       alignItems: 'center',
       marginTop: t.space.sm,
@@ -149,16 +149,14 @@ const styles = (t: Theme) =>
       paddingVertical: 4,
     },
     heroWeekday: { ...t.type.label, color: t.color.hero.soft } as object,
-    heroDay: { ...t.type.display, fontSize: 72, lineHeight: 80, color: t.color.hero.text } as object,
-    heroMonth: { ...t.type.body, color: t.color.hero.soft, fontFamily: t.font.semibold } as object,
+    heroDay: { ...t.type.display, fontSize: 64, lineHeight: 72, color: t.color.hero.text } as object,
+    heroMonth: { ...t.type.body, color: t.color.hero.soft, ...t.face.semibold } as object,
     lunarBadge: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 6,
-      backgroundColor: 'rgba(0,0,0,0.28)',
+      backgroundColor: 'rgba(0,0,0,0.18)',
       borderRadius: t.radius.full,
-      borderWidth: 1,
-      borderColor: 'rgba(207,185,111,0.35)',
       paddingHorizontal: t.space.lg,
       paddingVertical: 7,
       marginTop: t.space.md,
@@ -166,16 +164,16 @@ const styles = (t: Theme) =>
     lunarBadgeText: { ...t.type.label, color: t.color.hero.badge } as object,
     card: {
       backgroundColor: t.color.bg.surface,
-      borderRadius: t.radius.lg,
+      borderRadius: t.radius.card,
       borderWidth: 1,
       borderColor: t.color.border.subtle,
       marginTop: t.space.md,
       padding: t.space.lg,
       ...t.shadow.card,
     },
-    holidayCard: { backgroundColor: t.color.bg.goldSoft, borderColor: 'transparent' },
+    holidayCard: { backgroundColor: t.color.holiday.badgeBg, borderColor: 'transparent' },
     holidayRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-    holidayText: { ...t.type.headline, color: t.color.text.lunar } as object,
+    holidayText: { ...t.type.headline, color: t.color.holiday.badgeText } as object,
     rowBetween: { flexDirection: 'row' },
     itemLabel: { ...t.type.micro, color: t.color.text.tertiary } as object,
     itemValue: { ...t.type.headline, color: t.color.text.primary, marginTop: 4 } as object,
@@ -190,7 +188,7 @@ const styles = (t: Theme) =>
       paddingHorizontal: t.space.md,
       paddingVertical: 5,
     },
-    term: { ...t.type.caption, color: t.color.text.lunar, fontFamily: t.font.semibold } as object,
+    term: { ...t.type.caption, color: t.color.text.lunar, ...t.face.semibold } as object,
     starHeader: { flexDirection: 'row', alignItems: 'center', gap: t.space.md },
     starBadge: {
       flexDirection: 'row',
@@ -206,7 +204,7 @@ const styles = (t: Theme) =>
     hourWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: t.space.sm },
     hourChip: {
       backgroundColor: t.color.bg.elevated,
-      borderRadius: t.radius.md,
+      borderRadius: t.radius.input,
       paddingHorizontal: t.space.md,
       paddingVertical: t.space.sm,
       alignItems: 'center',

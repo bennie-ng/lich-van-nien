@@ -5,7 +5,7 @@ export {
   space,
   radius,
   type,
-  font,
+  face,
   type Theme,
   type ColorTokens,
 } from './tokens';

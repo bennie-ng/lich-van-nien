@@ -119,7 +119,7 @@ export default function MonthView({ year, month, today, onSelectDay, onPrev, onN
                       s.solarDay,
                       ci === 6 && { color: theme.color.weekend.sunday },
                       ci === 5 && { color: theme.color.weekend.saturday },
-                      holiday && { color: theme.color.text.accent },
+                      holiday && { color: theme.color.holiday.day },
                       isToday && s.todayText,
                     ]}
                   >
@@ -164,7 +164,7 @@ const styles = (t: Theme) =>
       gap: t.space.sm,
     },
     headerTitle: { ...t.type.titleXL, color: t.color.text.primary } as object,
-    headerYear: { color: t.color.text.tertiary, fontFamily: t.font.semibold },
+    headerYear: { color: t.color.text.tertiary, ...t.face.semibold },
     headerSub: { ...t.type.label, color: t.color.text.lunar, marginTop: 2 } as object,
     todayPill: {
       backgroundColor: t.color.bg.accentSoft,
@@ -185,7 +185,7 @@ const styles = (t: Theme) =>
     },
     card: {
       backgroundColor: t.color.bg.surface,
-      borderRadius: t.radius.lg,
+      borderRadius: t.radius.card,
       borderWidth: 1,
       borderColor: t.color.border.subtle,
       padding: t.space.sm,
@@ -216,10 +216,10 @@ const styles = (t: Theme) =>
       borderColor: t.color.border.ring,
     },
     cellPressed: { backgroundColor: t.color.bg.elevated },
-    solarDay: { fontSize: 17, fontFamily: t.font.semibold, color: t.color.text.primary },
-    todayText: { color: t.color.text.accent, fontFamily: t.font.extrabold },
-    lunarDay: { fontSize: 11, fontFamily: t.font.regular, color: t.color.text.tertiary, marginTop: 1 },
-    lunarSpecial: { color: t.color.text.lunar, fontFamily: t.font.bold },
+    solarDay: { fontSize: 17, ...t.face.semibold, color: t.color.text.primary },
+    todayText: { color: t.color.text.accent, ...t.face.bold },
+    lunarDay: { fontSize: 11, ...t.face.regular, color: t.color.text.tertiary, marginTop: 1 },
+    lunarSpecial: { color: t.color.text.lunar, ...t.face.bold },
     dot: { width: 4, height: 4, borderRadius: 2, marginTop: 3, backgroundColor: 'transparent' },
     legendRow: {
       flexDirection: 'row',

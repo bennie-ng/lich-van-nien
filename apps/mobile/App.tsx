@@ -2,14 +2,14 @@ import React, { useMemo, useState } from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import {
   useFonts,
-  BeVietnamPro_400Regular,
-  BeVietnamPro_500Medium,
-  BeVietnamPro_600SemiBold,
-  BeVietnamPro_700Bold,
-  BeVietnamPro_800ExtraBold,
-} from '@expo-google-fonts/be-vietnam-pro';
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+} from '@expo-google-fonts/inter';
 import { getDayInfo, type DayInfo } from 'lunar-core';
 import MonthView from './src/MonthView';
 import DayDetail from './src/DayDetail';
@@ -20,12 +20,13 @@ import type { Theme } from './src/design';
 type Tab = 'calendar' | 'day' | 'convert';
 
 export default function App() {
+  // Inter is only referenced on web (native uses the platform system font),
+  // but hooks must run unconditionally.
   const [fontsLoaded] = useFonts({
-    BeVietnamPro_400Regular,
-    BeVietnamPro_500Medium,
-    BeVietnamPro_600SemiBold,
-    BeVietnamPro_700Bold,
-    BeVietnamPro_800ExtraBold,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
   });
   if (!fontsLoaded) {
     return null;
@@ -104,28 +105,34 @@ function Shell() {
         {tab === 'convert' && <Converter initial={today} />}
       </View>
 
-      <View style={s.tabBar}>
-        <TabButton
-          label="Lịch"
-          icon="calendar"
-          active={tab === 'calendar'}
-          onPress={() => setTab('calendar')}
-          theme={theme}
-        />
-        <TabButton
-          label="Ngày"
-          icon="sunny"
-          active={tab === 'day'}
-          onPress={() => setTab('day')}
-          theme={theme}
-        />
-        <TabButton
-          label="Đổi ngày"
-          icon="swap-horizontal"
-          active={tab === 'convert'}
-          onPress={() => setTab('convert')}
-          theme={theme}
-        />
+      <View style={s.tabBarShadow}>
+        <BlurView
+          intensity={40}
+          tint={theme.scheme === 'dark' ? 'dark' : 'light'}
+          style={s.tabBar}
+        >
+          <TabButton
+            label="Lịch"
+            icon="calendar"
+            active={tab === 'calendar'}
+            onPress={() => setTab('calendar')}
+            theme={theme}
+          />
+          <TabButton
+            label="Ngày"
+            icon="sunny"
+            active={tab === 'day'}
+            onPress={() => setTab('day')}
+            theme={theme}
+          />
+          <TabButton
+            label="Đổi ngày"
+            icon="swap-horizontal"
+            active={tab === 'convert'}
+            onPress={() => setTab('convert')}
+            theme={theme}
+          />
+        </BlurView>
       </View>
     </SafeAreaView>
   );
@@ -186,7 +193,7 @@ const styles = (t: Theme) =>
     },
     appTitle: {
       ...t.type.micro,
-      color: t.color.text.lunar,
+      color: t.color.text.tertiary,
       letterSpacing: 2.5,
     } as object,
     themeBtn: {
@@ -200,17 +207,22 @@ const styles = (t: Theme) =>
       justifyContent: 'center',
     },
     content: { flex: 1, maxWidth: 560, width: '100%', alignSelf: 'center' },
-    tabBar: {
+    tabBarShadow: {
       position: 'absolute',
       bottom: t.space.xl,
       alignSelf: 'center',
+      borderRadius: t.radius.floating,
+      ...t.shadow.floating,
+    },
+    tabBar: {
       flexDirection: 'row',
-      backgroundColor: t.color.bg.surface,
-      borderRadius: t.radius.full,
+      backgroundColor:
+        t.scheme === 'dark' ? 'rgba(23,26,31,0.75)' : 'rgba(255,255,255,0.85)',
+      borderRadius: t.radius.floating,
       borderWidth: 1,
       borderColor: t.color.border.subtle,
       padding: 5,
       gap: 2,
-      ...t.shadow.floating,
+      overflow: 'hidden',
     },
   });

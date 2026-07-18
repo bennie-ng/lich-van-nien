@@ -1,117 +1,149 @@
-# Design System — Lịch Vạn Niên
+# Lịch Vạn Niên Design System
 
-Token-based design system implemented in `apps/mobile/src/design/`.
-Components never hard-code colors — they consume **semantic tokens** through
-`useTheme()`, which resolves to the light or dark theme (follows the system
-scheme, with an in-app override toggle).
+*Modern Human Interface (Apple-inspired)*
+
+> A modern Vietnamese lunar calendar should feel calm, elegant, and premium —
+> not bright red and gold everywhere. Color communicates meaning and subtle
+> cultural identity; the layout follows Apple's Human Interface Guidelines.
+> The app should suit daily use all year, not just festivals.
+
+Implemented in `apps/mobile/src/design/`:
 
 ```
-src/design/
-  palette.ts       # primitive color scales (raw hex — never imported by components)
-  tokens.ts        # semantic tokens: light & dark themes, spacing, radii, type scale
-  ThemeContext.tsx # ThemeProvider + useTheme()
-  index.ts         # public API
+palette.ts       # primitive values (raw hex — never imported by components)
+tokens.ts        # semantic tokens: light & dark themes, spacing, radii, type, faces
+ThemeContext.tsx # ThemeProvider + useTheme() (follows system, in-app override)
+index.ts         # public API
 ```
 
-## 1. Primitive palette
+## Principles
 
-**Direction: sơn mài (Vietnamese lacquerware) — premium Asian.** Deep crimson
-lacquer instead of bright vermilion, antique gold leaf instead of orange gold,
-celadon jade, chàm indigo, and porcelain-to-lacquer neutrals. Everything is
-rich and desaturated rather than bright; gold behaves like a precious metal —
-small doses, high impact.
+Minimal and clean · spacious layout · rounded corners (12–30px) · high
+readability · soft shadows · glass effects only on navigation/floating
+controls · consistent 8pt spacing · dynamic light & dark mode · WCAG AA.
 
-Five scales, each running 50 (lightest) to 900 (darkest):
+## 1. Color
 
-| Scale | Inspiration | Base (500) | Role |
-|---|---|---|---|
-| `son` | Sơn mài — deep lacquer crimson | `#953C46` | Brand accent, used with restraint |
-| `gold` | Hoàng kim — antique gold leaf | `#A17F2E` | Lunar layer, wordmark, gilded details |
-| `jade` | Ngọc — celadon jade | `#3D7E5B` | Auspicious (hoàng đạo) signals |
-| `bien` | Chàm — indigo dye | `#4F6096` | Saturday, informational |
-| `ink` | Mực — porcelain → lacquer | `#6F6557` | Text, surfaces, borders (0–950) |
+### Primary — Jade Green (prosperity, harmony, growth)
 
-Rules:
+| Token | Value |
+|---|---|
+| `accent.solid` / Primary | `#1E9E73` |
+| Hover | `#1A8C66` |
+| `accent.strong` / Pressed | `#167D5C` |
+| `bg.accentSoft` / Primary Light | `#DDF7EE` |
+| Dark-surface lift (`text.accent` dark) | `#2EB584` |
 
-- **Primitives are private.** Only `tokens.ts` may import `palette.ts`.
-- Light theme sits on porcelain ivory (`ink.50 #F6F3EC`), dark theme on
-  lacquer black (`ink.950 #141011`) — never pure white or pure gray.
+### Secondary — Imperial Gold (sparing, premium accents)
 
-## 2. Semantic tokens
+| Token | Value |
+|---|---|
+| Accent | `#D4A72C` |
+| `bg.goldSoft` / Accent Light | `#F8EFD0` |
+| `text.lunar` (light) | `#8F6F14` — darkened for 4.5:1 text contrast |
+| `text.lunar` (dark) | `#E8C55A` |
 
-Each token exists in light and dark. Highlights (light → dark):
+### Lunar Blue (moon layer, selected dates)
 
-| Token | Light | Dark | Used for |
-|---|---|---|---|
-| `bg.canvas` | `ink.50` | `ink.950` | App background |
-| `bg.surface` | `ink.0` | `ink.900` | Cards, tab bar |
-| `bg.elevated` | `ink.100` | `ink.850` | Chips, inputs |
-| `bg.accentSoft` | `son.50` | `#3A211B` | Today cell, selected wash |
-| `bg.goldSoft` | `gold.100` | `#3A2E14` | Mùng 1 / rằm cells, holiday card |
-| `text.primary` | `ink.900` | `ink.100` | Headings, dates |
-| `text.secondary` | `ink.600` | `ink.400` | Body copy |
-| `text.tertiary` | `ink.400` | `ink.500` | Captions, lunar day numbers |
-| `text.accent` | `son.600` | `son.300` | Links, holidays, active states |
-| `text.lunar` | `gold.600` | `gold.300` | Lunar figures, wordmark |
-| `text.onAccent` | `#FBF7EE` (ivory) | `#F6EDD9` | Text on filled accent — never pure white |
-| `accent.solid` | `son.600` | `son.500` | Filled buttons, active tab |
-| `accent.gradient` | `son.600→900` | `son.700→#230C12` | Day-detail hero |
-| `hero.text` / `soft` / `badge` | gilded ivory / `#D8BD90` / `gold.200` | `#F2E7CE` / `#CBAE7E` / `gold.300` | Type on the hero gradient |
-| `state.good` | `jade.600` | `jade.300` | Hoàng đạo dot/badge |
-| `state.bad` | `ink.400` | `ink.500` | Hắc đạo (muted, never alarming) |
-| `weekend.sunday` | `son.600` | `son.300` | Sunday column |
-| `weekend.saturday` | `bien.600` | `bien.300` | Saturday column |
-| `border.subtle` / `strong` / `ring` | `ink.100/200`, `son.600` | `ink.850/700`, `son.400` | Card borders, focus/today ring |
+`selected.solid #4F7BFF` · `selected.soft #E8EEFF` (dark `#1B2440`).
 
-Semantics worth keeping:
+### Semantic
 
-- **Crimson = brand, not error.** Errors use `state.danger`, applied sparingly.
-- **Gold marks the lunar layer** everywhere (dates, tiết khí, mùng 1/rằm,
-  wordmark) so the two calendars are visually separable at a glance — and gold
-  stays scarce so it keeps its value.
-- **Text on crimson is gilded ivory, never pure white** — the warm cast is
-  what makes the fills read as lacquer instead of "alert red".
-- **Jade = auspicious only.** Hắc đạo is muted neutral, not "bad red" — the
-  calendar informs, it doesn't scold.
-- Dark mode is not inverted light mode: accents shift ~2 steps lighter
-  (`son.600 → son.300`) to hold WCAG AA contrast on dark surfaces.
+Success `#1DB954` · Error `#E34B4B` · Warning `#F59E0B` · Info `#3B82F6`.
 
-## 3. Layout & shape
+### Themes
 
-- **Spacing** — 4pt scale: `xs 4 · sm 8 · md 12 · lg 16 · xl 24 · xxl 32`.
-- **Radius** — `sm 10 · md 14 · lg 20 · xl 28 · full` (pill). Cards use `lg`,
-  hero uses `xl`, buttons/badges use `full`.
-- **Elevation** — two shadows only: `card` (subtle, ambient) and `floating`
-  (tab bar, hero). Both defined per-theme.
-
-## 4. Typography
-
-Brand typeface: **[Be Vietnam Pro](https://fonts.google.com/specimen/Be+Vietnam+Pro)**
-— a Google Font designed in Vietnam with first-class diacritic support. Loaded
-via `@expo-google-fonts/be-vietnam-pro` in `App.tsx` (weights 400–800).
-
-Custom fonts on native ignore `fontWeight`, so weight is always expressed by
-picking a weight-specific family through the `font` tokens
-(`font.regular … font.extrabold`) — components never write `fontWeight` or a
-raw family name.
-
-| Token | Size / family | Used for |
+| Token | Light | Dark |
 |---|---|---|
-| `display` | 44–72 / `font.extrabold` | Hero day number |
-| `titleXL` | 26 / `font.extrabold` | Screen titles ("Tháng 7") |
-| `title` | 20 / `font.bold` | Converter result |
-| `headline` | 16 / `font.bold` | Card titles, can chi values |
-| `body` | 15 / `font.regular` | Copy |
-| `label` | 13 / `font.semibold` | Pills, tabs, badges |
-| `caption` | 12 / `font.medium` | Secondary metadata |
-| `micro` | 11 / `font.semibold` upper, +0.6 tracking | Column headers, field labels |
+| `bg.canvas` | `#F7F8FA` | `#0B0D10` |
+| `bg.surface` (cards) | `#FFFFFF` | `#171A1F` |
+| `bg.elevated` (inputs, chips) | `#F2F4F7` | `#23272F` |
+| `border.subtle` (divider) | `#E5E7EB` | `#31363F` |
+| `border.strong` | `#D6DAE1` | `#3D4350` |
+| `text.primary` | `#111827` | `#F8FAFC` |
+| `text.secondary` | `#6B7280` | `#AAB2C0` |
+| `text.tertiary` | `#9CA3AF` | `#808998` |
+| `text.disabled` | `#B7BDC8` | `#626B78` |
 
-## 5. Interface patterns
+### Calendar colors
 
-- **Large-title header** on each screen; the app bar is a whisper
-  (micro-caps wordmark + theme toggle), not a heavy branded band.
-- **Floating pill tab bar** with the active tab as a filled accent pill.
-- **Month grid**: solar number dominant, lunar number small beneath; today =
-  accent ring + wash; mùng 1/rằm = gold wash; hoàng đạo = jade dot;
-  holidays tint the solar number accent red.
-- **Content max-width 560px** so the same layout works phone → desktop web.
+| Item | Token → value |
+|---|---|
+| Today | jade ring + `bg.accentSoft` wash |
+| Selected day | `selected.solid #4F7BFF` |
+| Weekend (T7 & CN) | `weekend.* #F59E0B` |
+| Holiday number | `holiday.day #E34B4B` |
+| Mùng 1 / rằm cell | `bg.goldSoft` wash, `text.lunar` figure |
+| Hoàng đạo dot | `state.good` (jade) |
+
+### Badges
+
+| Badge | Background | Text |
+|---|---|---|
+| Good day (hoàng đạo) | `#DDF7EE` | `#1E9E73` |
+| Bad day (hắc đạo) | `#FDEAEA` | `#E34B4B` |
+| Holiday | `#FFF2E2` | `#B45309` (darkened from `#F59E0B` for AA) |
+
+### Ngũ hành (Five Elements) — muted
+
+Kim `#B9A56B` · Mộc `#3FA66B` · Thủy `#4A7DFF` · Hỏa `#E85D5D` · Thổ `#B68C58`
+(`color.element.*`, reserved for the day-detail element display).
+
+### Zodiac indicators
+
+Lucky `#22C55E` · Neutral `#64748B` · Caution `#EF4444` (`color.zodiac.*`).
+
+## 2. Typography
+
+Platform-native per spec: **SF Pro** on iOS, **Roboto** on Android (system
+font — no bundle), **Inter** on web (loaded via `@expo-google-fonts/inter`).
+
+Weight is expressed through `face.*` tokens — on native they resolve to
+`fontWeight` on the system family, on web to a weight-specific Inter family.
+Components never write raw `fontFamily`/`fontWeight`.
+
+| Token | Size / face | Spec name |
+|---|---|---|
+| `display` | 48–64 / bold | Large Date |
+| `titleXL` | 34 / bold | Large Title |
+| `title` | 22 / bold | Title 2 |
+| `headline` | 17 / semibold | Body-emphasized |
+| `body` | 15 / regular | Subheadline |
+| `label` | 13 / semibold | — |
+| `caption` | 13 / medium | Caption |
+| `micro` | 11 / semibold, caps | Small |
+
+## 3. Shape, space, elevation
+
+- **Radius**: cell 12 · input 14 · button/segment 16 · card 20 · modal/hero 28
+  · floating panel 30 · chips 999.
+- **Spacing**: 8pt grid — 4, 8, 12, 16, 24, 32, 48.
+- **Shadows**: card `0 6 20 rgba(0,0,0,0.08)`; floating `0 12 32 rgba(0,0,0,0.12)`
+  (opacity raised in dark mode).
+
+## 4. Glass (blur) usage
+
+Blur is applied **only** to the floating tab bar (`expo-blur`, 80–90%-opacity
+surface tint over blur). Calendar cells, cards, lists, and forms stay opaque —
+clean and performant, per spec.
+
+## 5. Navigation
+
+Floating pill tab bar: translucent blurred background, active tab = filled
+jade pill with white icon/label, inactive icons `text.tertiary`. Minimal app
+bar (micro-caps wordmark + theme toggle).
+
+## 6. Accessibility
+
+- Touch targets ≥ 44×44pt on interactive controls.
+- Text contrast ≥ 4.5:1 — where spec accent values fall short as *text*
+  (imperial gold, holiday amber), the token darkens them (`#8F6F14`,
+  `#B45309`) while washes/dots keep the spec hue.
+- Color never carries meaning alone: hoàng đạo has dot + badge + label,
+  holidays have the banner card, today has ring + wash.
+- Light/dark follow the system scheme automatically.
+
+## 7. Motion (to implement)
+
+150–250 ms, ease-out; month switching, date selection, sheet presentation.
+Respect Reduce Motion.

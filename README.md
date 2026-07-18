@@ -32,7 +32,7 @@ can chi anchors) plus a round-trip test over every day from 1990 to 2049.
 
 Expo SDK 57 app with three screens: month grid (dual solar/lunar dates,
 hoàng đạo markers, holidays), day detail (can chi, giờ hoàng đạo, tiết khí),
-and a solar ↔ lunar date converter. Styled by the token-based color design
+and a solar ↔ lunar date converter. Styled by the token-based design
 system documented in [DESIGN.md](./DESIGN.md), with light and dark themes.
 
 ## Development

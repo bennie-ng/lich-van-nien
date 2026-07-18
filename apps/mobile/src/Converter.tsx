@@ -103,7 +103,7 @@ export default function Converter({ initial }: { initial: { day: number; month: 
                   {
                     backgroundColor: result.good
                       ? theme.color.state.goodSoft
-                      : theme.color.bg.elevated,
+                      : theme.color.state.badSoft,
                   },
                 ]}
               >
@@ -180,13 +180,13 @@ const styles = (t: Theme) =>
     segmented: {
       flexDirection: 'row',
       backgroundColor: t.color.bg.elevated,
-      borderRadius: t.radius.md,
+      borderRadius: t.radius.button,
       padding: 3,
       marginBottom: t.space.md,
     },
     segment: {
       flex: 1,
-      borderRadius: t.radius.md - 3,
+      borderRadius: t.radius.button - 3,
       paddingVertical: t.space.sm + 2,
       alignItems: 'center',
     },
@@ -195,7 +195,7 @@ const styles = (t: Theme) =>
     segmentTextActive: { color: t.color.text.accent },
     card: {
       backgroundColor: t.color.bg.surface,
-      borderRadius: t.radius.lg,
+      borderRadius: t.radius.card,
       borderWidth: 1,
       borderColor: t.color.border.subtle,
       padding: t.space.lg,
@@ -208,19 +208,19 @@ const styles = (t: Theme) =>
     input: {
       borderWidth: 1.5,
       borderColor: t.color.border.strong,
-      borderRadius: t.radius.md,
+      borderRadius: t.radius.input,
       paddingHorizontal: t.space.md,
       paddingVertical: t.space.md,
       fontSize: 18,
-      fontFamily: t.font.semibold,
+      ...t.face.semibold,
       color: t.color.text.primary,
       backgroundColor: t.color.bg.elevated,
     },
     leapRow: { flexDirection: 'row', alignItems: 'center', marginTop: t.space.lg },
     checkbox: {
-      width: 22,
-      height: 22,
-      borderRadius: 7,
+      width: 24,
+      height: 24,
+      borderRadius: 8,
       borderWidth: 2,
       borderColor: t.color.accent.solid,
       alignItems: 'center',
@@ -242,6 +242,6 @@ const styles = (t: Theme) =>
       paddingHorizontal: t.space.sm,
       paddingVertical: 3,
     },
-    resultTagText: { ...t.type.caption, fontFamily: t.font.bold } as object,
+    resultTagText: { ...t.type.caption, ...t.face.bold } as object,
     error: { ...t.type.label, color: t.color.state.danger, textAlign: 'center' } as object,
   });
