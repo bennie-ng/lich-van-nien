@@ -69,23 +69,35 @@ export default function MonthView({
   return (
     <View style={s.container}>
       <View style={s.header}>
-        <View style={{ flex: 1 }}>
-          <Text style={s.headerTitle}>
-            Tháng {month} <Text style={s.headerYear}>{year}</Text>
+        <Text style={s.headerTitle} numberOfLines={1}>
+          Tháng {month} <Text style={s.headerYear}>{year}</Text>
+        </Text>
+        <View style={s.headerControls}>
+          <Text style={s.headerSub} numberOfLines={1}>
+            {monthLunarLabel}
           </Text>
-          <Text style={s.headerSub}>{monthLunarLabel}</Text>
-        </View>
-        {!isCurrentMonth && (
-          <Pressable onPress={onToday} style={s.todayPill}>
-            <Text style={s.todayPillText}>Hôm nay</Text>
+          {!isCurrentMonth && (
+            <Pressable onPress={onToday} style={s.todayPill} hitSlop={6}>
+              <Text style={s.todayPillText}>Hôm nay</Text>
+            </Pressable>
+          )}
+          <Pressable
+            onPress={onPrev}
+            style={s.navBtn}
+            hitSlop={6}
+            accessibilityLabel="Tháng trước"
+          >
+            <Ionicons name="chevron-back" size={20} color={theme.color.text.accent} />
           </Pressable>
-        )}
-        <Pressable onPress={onPrev} style={s.navBtn} accessibilityLabel="Tháng trước">
-          <Ionicons name="chevron-back" size={20} color={theme.color.text.accent} />
-        </Pressable>
-        <Pressable onPress={onNext} style={s.navBtn} accessibilityLabel="Tháng sau">
-          <Ionicons name="chevron-forward" size={20} color={theme.color.text.accent} />
-        </Pressable>
+          <Pressable
+            onPress={onNext}
+            style={s.navBtn}
+            hitSlop={6}
+            accessibilityLabel="Tháng sau"
+          >
+            <Ionicons name="chevron-forward" size={20} color={theme.color.text.accent} />
+          </Pressable>
+        </View>
       </View>
 
       <FadeIn trigger={`${year}-${month}`} style={s.card}>
@@ -171,15 +183,18 @@ const styles = (t: Theme) =>
   StyleSheet.create({
     container: { paddingHorizontal: t.space.lg },
     header: {
-      flexDirection: 'row',
-      alignItems: 'center',
       paddingTop: t.space.sm,
       paddingBottom: t.space.lg,
       gap: t.space.sm,
     },
     headerTitle: { ...t.type.titleXL, color: t.color.text.primary } as object,
     headerYear: { color: t.color.text.tertiary, ...t.face.semibold },
-    headerSub: { ...t.type.label, color: t.color.text.lunar, marginTop: 2 } as object,
+    headerControls: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: t.space.sm,
+    },
+    headerSub: { ...t.type.label, color: t.color.text.lunar, flex: 1 } as object,
     todayPill: {
       backgroundColor: t.color.bg.accentSoft,
       borderRadius: t.radius.full,
