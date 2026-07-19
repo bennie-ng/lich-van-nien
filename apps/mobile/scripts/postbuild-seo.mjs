@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
-const SITE_URL = process.env.SITE_URL || 'https://astrologik.hoangna1204-dev.workers.dev';
+const SITE_URL = process.env.SITE_URL || 'https://astrologik.app';
 
 const TITLE = 'Astrologik – Lịch Vạn Niên, Lịch Âm Hôm Nay, Ngày Giờ Hoàng Đạo';
 const DESCRIPTION =
@@ -74,6 +74,7 @@ const fallback = `<div id="root"><div style="font-family:system-ui,sans-serif;ma
         <li>Can chi ngày – tháng – năm, tiết khí, ngũ hành nạp âm</li>
         <li>Đổi ngày dương lịch sang âm lịch và ngược lại (1800–2199)</li>
       </ul>
+      <p><a href="/am-lich/">Xem âm lịch hôm nay</a></p>
       <p>Đang tải ứng dụng…</p>
     </div></div>`;
 html = html.replace('<div id="root"></div>', fallback);
@@ -82,11 +83,8 @@ writeFileSync(htmlPath, html);
 
 writeFileSync(join(dist, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);
 
-const today = new Date().toISOString().slice(0, 10);
-writeFileSync(
-  join(dist, 'sitemap.xml'),
-  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>${SITE_URL}/</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq></url>\n</urlset>\n`,
-);
+// sitemap.xml is served dynamically by the Worker (it lists the per-day
+// /am-lich pages) — a static file here would shadow it, so none is written.
 
 const ogSrc = join(root, 'web', 'og-image.png');
 if (existsSync(ogSrc)) {

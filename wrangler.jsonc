@@ -1,11 +1,15 @@
-// Cloudflare Workers config — static-assets deploy of the web app.
-// The dashboard's Git integration runs `npm run build` (which exports the
-// Expo web app to apps/mobile/dist) and then `npx wrangler deploy`.
+// Cloudflare Workers config.
+// - worker/index.ts server-renders /am-lich/YYYY-MM-DD day pages and the
+//   sitemap on the edge (using lunar-core), and falls back to the static
+//   app shell for everything else.
+// - The dashboard Git integration runs `npm run build` (Expo web export
+//   + SEO postbuild into apps/mobile/dist) and then `npx wrangler deploy`.
 {
   "name": "astrologik",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-07-01",
   "assets": {
     "directory": "./apps/mobile/dist",
-    "not_found_handling": "single-page-application"
+    "binding": "ASSETS"
   }
 }
