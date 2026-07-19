@@ -12,12 +12,13 @@ import {
 } from '@expo-google-fonts/inter';
 import { getDayInfo, type DayInfo } from 'lunar-core';
 import MonthView from './src/MonthView';
+import YearView from './src/YearView';
 import DayDetail from './src/DayDetail';
 import Converter from './src/Converter';
 import { FadeIn, ThemeProvider, useTheme } from './src/design';
 import type { Theme } from './src/design';
 
-type Tab = 'calendar' | 'day' | 'convert';
+type Tab = 'calendar' | 'year' | 'day' | 'convert';
 
 export default function App() {
   // Inter is only referenced on web (native uses the platform system font),
@@ -102,6 +103,20 @@ function Shell() {
             }}
           />
         )}
+        {tab === 'year' && (
+          <YearView
+            year={viewYear}
+            today={today}
+            onPrev={() => setViewYear(viewYear - 1)}
+            onNext={() => setViewYear(viewYear + 1)}
+            onThisYear={() => setViewYear(today.year)}
+            onSelectMonth={(month, year) => {
+              setViewMonth(month);
+              setViewYear(year);
+              setTab('calendar');
+            }}
+          />
+        )}
         {tab === 'day' && <DayDetail info={selected} />}
         {tab === 'convert' && <Converter initial={today} />}
       </FadeIn>
@@ -113,10 +128,17 @@ function Shell() {
           style={s.tabBar}
         >
           <TabButton
-            label="Lịch"
+            label="Tháng"
             icon="calendar"
             active={tab === 'calendar'}
             onPress={() => setTab('calendar')}
+            theme={theme}
+          />
+          <TabButton
+            label="Năm"
+            icon="grid"
+            active={tab === 'year'}
+            onPress={() => setTab('year')}
             theme={theme}
           />
           <TabButton
@@ -156,6 +178,8 @@ function TabButton({
   return (
     <Pressable
       onPress={onPress}
+      accessibilityLabel={label}
+      hitSlop={4}
       style={[
         tabStyles.btn,
         { borderRadius: theme.radius.full },
@@ -163,7 +187,7 @@ function TabButton({
       ]}
     >
       <Ionicons name={active ? icon : (`${icon}-outline` as any)} size={18} color={color} />
-      <Text style={[{ ...theme.type.label, color } as object]}>{label}</Text>
+      {active && <Text style={[{ ...theme.type.label, color } as object]}>{label}</Text>}
     </Pressable>
   );
 }
