@@ -47,7 +47,24 @@ npm run web            # run the app in a browser
 npm run start          # Expo dev server (scan QR with Expo Go for iOS/Android)
 ```
 
-Static web build: `cd apps/mobile && npx expo export --platform web` → `dist/`.
+Static web build: `npm run build` (root) → `apps/mobile/dist`.
+
+## Deployment (web)
+
+Hosted on **Cloudflare Pages** via the Git integration — every push to the
+production branch builds and deploys automatically; no API tokens involved.
+
+Dashboard configuration (Workers & Pages → Create → Pages → Connect to Git):
+
+| Setting | Value |
+|---|---|
+| Root directory | `/` (repo root — required so the `lunar-core` workspace links locally) |
+| Build command | `npm run build` |
+| Build output directory | `apps/mobile/dist` |
+
+Node version is pinned by `.nvmrc` (22), which Cloudflare Pages respects.
+Custom domains are attached once in the dashboard (Pages project → Custom
+domains); CI never needs DNS access.
 
 ## Roadmap
 
