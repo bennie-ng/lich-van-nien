@@ -24,24 +24,25 @@ controls · consistent 8pt spacing · dynamic light & dark mode · WCAG AA.
 
 ## 1. Color
 
-### Primary — Jade Green (prosperity, harmony, growth)
+### Primary — Soil Brown (đất: earthy, grounded, echoes the Thổ element)
 
 | Token | Value |
 |---|---|
-| `accent.solid` / Primary | `#1E9E73` |
-| Hover | `#1A8C66` |
-| `accent.strong` / Pressed | `#167D5C` |
-| `bg.accentSoft` / Primary Light | `#DDF7EE` |
-| Dark-surface lift (`text.accent` dark) | `#2EB584` |
+| `accent.solid` / Primary | `#8A4B3C` (white on it ≈ 6.7:1) |
+| Hover | `#7C4336` |
+| `accent.strong` / Pressed | `#6C392E` |
+| `bg.accentSoft` / Primary Light | `#F5EAE4` |
+| Dark-surface lift (`text.accent` dark) | `#C68872` |
+| Hero gradient | `#8A4B3C → #A96B52` light · `#46261D → #8A4B3C` dark |
 
-### Secondary — Imperial Gold (sparing, premium accents)
+### Secondary — Imperial Gold (bright variant; sparing, premium accents)
 
 | Token | Value |
 |---|---|
-| Accent | `#D4A72C` |
-| `bg.goldSoft` / Accent Light | `#F8EFD0` |
-| `text.lunar` (light) | `#8F6F14` — darkened for 4.5:1 text contrast |
-| `text.lunar` (dark) | `#E8C55A` |
+| Accent | `#F2C022` |
+| `bg.goldSoft` / Accent Light | `#FCF0BF` |
+| `text.lunar` (light) | `#9C780C` — darkened toward AA for text on light |
+| `text.lunar` (dark) | `#FFD54F` |
 
 ### Lunar Blue (moon layer, selected dates)
 
@@ -49,7 +50,7 @@ controls · consistent 8pt spacing · dynamic light & dark mode · WCAG AA.
 
 ### Semantic
 
-Success `#1DB954` · Error `#E34B4B` · Warning `#F59E0B` · Info `#3B82F6`.
+Success `#1DB954` · Error `#E34B4B` · Warning `#FFAD14` · Info `#3B82F6`.
 
 ### Themes
 
@@ -69,9 +70,9 @@ Success `#1DB954` · Error `#E34B4B` · Warning `#F59E0B` · Info `#3B82F6`.
 
 | Item | Token → value |
 |---|---|
-| Today | jade ring + `bg.accentSoft` wash |
+| Today | primary ring + `bg.accentSoft` wash |
 | Selected day | `selected.solid #4F7BFF` |
-| Weekend (T7 & CN) | `weekend.* #F59E0B` |
+| Weekend (T7 & CN) | `weekend.* #FFAD14` light / `#FFC14D` dark |
 | Holiday number | `holiday.day #E34B4B` |
 | Mùng 1 / rằm cell | `bg.goldSoft` wash, `text.lunar` figure |
 | Hoàng đạo dot | `state.good` (jade) |

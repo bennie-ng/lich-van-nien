@@ -4,14 +4,29 @@
  * Components never import these directly; they consume semantic tokens
  * from `tokens.ts`.
  *
- * Direction: modern Apple-HIG. Calm, minimal, premium. Jade green is the
- * primary (prosperity, harmony), imperial gold is a sparing accent, lunar
- * blue marks the moon/selection layer. Vietnamese culture shows through
- * meaningful color, not decoration.
+ * Direction: modern Apple-HIG. Calm, minimal, premium. Soil brown (đất)
+ * is the primary — earthy and grounded, echoing the Thổ element — with
+ * bright imperial gold as a sparing accent and lunar blue for the
+ * moon/selection layer. Jade green is reserved for auspicious signals.
+ * Vietnamese culture shows through meaningful color, not decoration.
  */
 
 export const palette = {
-  /** Jade Green — primary. Prosperity, harmony, growth. */
+  /** Primary — soil brown: earthy red-brown (đất), warm and grounded. */
+  soil: {
+    solid: '#8A4B3C',
+    hover: '#7C4336',
+    pressed: '#6C392E',
+    light: '#F5EAE4',
+    /** Lifted variant for text/icons on dark surfaces (AA) */
+    bright: '#C68872',
+    /** Dark-theme soft wash */
+    softDark: '#33221C',
+    /** Gradient end */
+    gradientEnd: '#A96B52',
+  },
+
+  /** Jade Green — auspicious (hoàng đạo) signals only. */
   jade: {
     solid: '#1E9E73',
     hover: '#1A8C66',
@@ -25,15 +40,15 @@ export const palette = {
     gradientEnd: '#52C18A',
   },
 
-  /** Imperial Gold — secondary accent, used sparingly. */
+  /** Imperial Gold — secondary accent, used sparingly. Bright variant. */
   gold: {
-    solid: '#D4A72C',
-    light: '#F8EFD0',
-    /** Darkened for text on light surfaces (AA) */
-    text: '#8F6F14',
+    solid: '#F2C022',
+    light: '#FCF0BF',
+    /** Darkened for text on light surfaces (near-AA; brightest that stays readable) */
+    text: '#9C780C',
     /** Lifted for text on dark surfaces */
-    textDark: '#E8C55A',
-    softDark: '#31290F',
+    textDark: '#FFD54F',
+    softDark: '#3B300E',
   },
 
   /** Lunar Blue — moon phases and selected dates. */
@@ -46,7 +61,7 @@ export const palette = {
   /** Semantic */
   success: '#1DB954',
   error: '#E34B4B',
-  warning: '#F59E0B',
+  warning: '#FFAD14',
   info: '#3B82F6',
 
   /** Neutrals — light theme */

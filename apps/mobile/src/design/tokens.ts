@@ -17,7 +17,7 @@ export interface ColorTokens {
     surface: string;
     /** Secondary surface — inputs, chips */
     elevated: string;
-    /** Jade wash (today, active soft states) */
+    /** Primary wash (today, active soft states) */
     accentSoft: string;
     /** Gold wash (mùng 1 / rằm cells) */
     goldSoft: string;
@@ -29,17 +29,17 @@ export interface ColorTokens {
     disabled: string;
     /** Text on accent.solid — white per spec */
     onAccent: string;
-    /** Jade — links, active states */
+    /** Primary — links, active states */
     accent: string;
     /** Gold, darkened for AA text contrast — lunar figures */
     lunar: string;
   };
   accent: {
-    /** Primary jade — filled buttons, active tab, today */
+    /** Primary — filled buttons, active tab, today */
     solid: string;
     /** Pressed */
     strong: string;
-    /** "Nature" gradient */
+    /** Hero gradient */
     gradient: [string, string];
   };
   /** Lunar Blue — moon layer, selected dates */
@@ -173,7 +173,7 @@ export const lightTheme: Theme = {
       canvas: palette.light.background,
       surface: palette.light.surface,
       elevated: palette.light.surface2,
-      accentSoft: palette.jade.light,
+      accentSoft: palette.soil.light,
       goldSoft: palette.gold.light,
     },
     text: {
@@ -182,13 +182,13 @@ export const lightTheme: Theme = {
       tertiary: palette.light.textTertiary,
       disabled: palette.light.textDisabled,
       onAccent: '#FFFFFF',
-      accent: palette.jade.solid,
+      accent: palette.soil.solid,
       lunar: palette.gold.text,
     },
     accent: {
-      solid: palette.jade.solid,
-      strong: palette.jade.pressed,
-      gradient: [palette.jade.solid, palette.jade.gradientEnd],
+      solid: palette.soil.solid,
+      strong: palette.soil.pressed,
+      gradient: [palette.soil.solid, palette.soil.gradientEnd],
     },
     selected: {
       solid: palette.lunar.solid,
@@ -218,7 +218,7 @@ export const lightTheme: Theme = {
     border: {
       subtle: palette.light.divider,
       strong: palette.light.border,
-      ring: palette.jade.solid,
+      ring: palette.soil.solid,
     },
     element: palette.element,
     zodiac: palette.zodiac,
@@ -252,7 +252,7 @@ export const darkTheme: Theme = {
       canvas: palette.dark.background,
       surface: palette.dark.surface,
       elevated: palette.dark.surface2,
-      accentSoft: palette.jade.softDark,
+      accentSoft: palette.soil.softDark,
       goldSoft: palette.gold.softDark,
     },
     text: {
@@ -261,13 +261,13 @@ export const darkTheme: Theme = {
       tertiary: palette.dark.textTertiary,
       disabled: palette.dark.textDisabled,
       onAccent: '#FFFFFF',
-      accent: palette.jade.bright,
+      accent: palette.soil.bright,
       lunar: palette.gold.textDark,
     },
     accent: {
-      solid: palette.jade.solid,
-      strong: palette.jade.hover,
-      gradient: ['#14664B', palette.jade.solid],
+      solid: palette.soil.solid,
+      strong: palette.soil.hover,
+      gradient: ['#46261D', palette.soil.solid],
     },
     selected: {
       solid: palette.lunar.solid,
@@ -288,16 +288,16 @@ export const darkTheme: Theme = {
     holiday: {
       day: '#F07B7B',
       badgeBg: '#33260F',
-      badgeText: '#F5B455',
+      badgeText: '#FFC14D',
     },
     weekend: {
-      sunday: '#F5B455',
-      saturday: '#F5B455',
+      sunday: '#FFC14D',
+      saturday: '#FFC14D',
     },
     border: {
       subtle: palette.dark.divider,
       strong: palette.dark.border,
-      ring: palette.jade.bright,
+      ring: palette.soil.bright,
     },
     element: palette.element,
     zodiac: palette.zodiac,
