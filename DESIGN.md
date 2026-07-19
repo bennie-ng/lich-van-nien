@@ -1,4 +1,4 @@
-# Lịch Vạn Niên Design System
+# Astrologik (Lịch Vạn Niên) Design System
 
 *Modern Human Interface (Apple-inspired)*
 

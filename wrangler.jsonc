@@ -2,7 +2,7 @@
 // The dashboard's Git integration runs `npm run build` (which exports the
 // Expo web app to apps/mobile/dist) and then `npx wrangler deploy`.
 {
-  "name": "lich-van-nien",
+  "name": "astrologik",
   "compatibility_date": "2026-07-01",
   "assets": {
     "directory": "./apps/mobile/dist",

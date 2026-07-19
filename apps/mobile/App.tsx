@@ -73,7 +73,7 @@ function Shell() {
       <StatusBar style={theme.scheme === 'dark' ? 'light' : 'dark'} />
 
       <View style={s.appBar}>
-        <Text style={s.appTitle}>Lịch Vạn Niên</Text>
+        <Text style={s.appTitle}>Astrologik</Text>
         <Pressable onPress={toggle} style={s.themeBtn} accessibilityLabel="Đổi giao diện sáng/tối">
           <Ionicons
             name={theme.scheme === 'dark' ? 'sunny-outline' : 'moon-outline'}

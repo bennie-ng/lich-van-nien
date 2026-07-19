@@ -1,7 +1,8 @@
-# Lịch Vạn Niên
+# Astrologik
 
-Vietnamese perpetual calendar (lịch vạn niên) — one TypeScript monorepo producing
-an iOS + Android app and a web app from the same codebase.
+**Astrologik** — a Vietnamese perpetual calendar (lịch vạn niên): one TypeScript
+monorepo producing an iOS + Android app and a web app from the same codebase.
+"Astrologik" is the brand; "Lịch vạn niên" remains the Vietnamese product name.
 
 ## Structure
 

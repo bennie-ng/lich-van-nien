@@ -3,7 +3,7 @@
  * Every color exists in a light and a dark variant; components read
  * them through `useTheme()` and never hard-code hex values.
  *
- * Spec: "Lịch Vạn Niên Design System — Modern Human Interface".
+ * Spec: "Astrologik (Lịch Vạn Niên) Design System — Modern Human Interface".
  */
 
 import { Platform } from 'react-native';
