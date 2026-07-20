@@ -1175,7 +1175,8 @@ const styles = (t: Theme, isWide: boolean) =>
       flexShrink: 0,
     } as object,
     starMajor: {
-      fontSize: isWide ? 12 : 10,
+      fontSize: isWide ? 12 : 8.5,
+      lineHeight: isWide ? 16 : 12,
       ...t.face.bold,
       textAlign: 'center',
       textTransform: 'uppercase',
