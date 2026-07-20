@@ -23,10 +23,11 @@ import MonthView from './src/MonthView';
 import YearView from './src/YearView';
 import DayDetail from './src/DayDetail';
 import Converter from './src/Converter';
+import TuViView from './src/TuViView';
 import { FadeIn, ThemeProvider, useTheme } from './src/design';
 import type { Theme } from './src/design';
 
-type Tab = 'calendar' | 'year' | 'day' | 'convert';
+type Tab = 'calendar' | 'year' | 'day' | 'convert' | 'tuvi';
 
 /** Breakpoint above which the desktop layout (top nav, side panel) applies. */
 export const WIDE_BREAKPOINT = 900;
@@ -142,6 +143,14 @@ function Shell() {
         theme={theme}
         showLabel={isWide}
       />
+      <TabButton
+        label="Tử vi"
+        icon="planet"
+        active={effectiveTab === 'tuvi'}
+        onPress={() => setTab('tuvi')}
+        theme={theme}
+        showLabel={isWide}
+      />
     </>
   );
 
@@ -191,6 +200,7 @@ function Shell() {
         )}
         {effectiveTab === 'day' && <DayDetail info={selected} />}
         {effectiveTab === 'convert' && <Converter initial={today} />}
+        {effectiveTab === 'tuvi' && <TuViView initial={today} />}
       </FadeIn>
 
       {!isWide && (

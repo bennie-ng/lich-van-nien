@@ -5,6 +5,7 @@ export * from './hoangdao';
 export * from './tietkhi';
 export * from './holidays';
 export * from './nguhanh';
+export * from './tuvi';
 
 import { jdFromDate, VIETNAM_TZ } from './astronomy';
 import { solarToLunar, type LunarDate } from './lunar';
