@@ -60,10 +60,9 @@ function columns(stars: TuViStar[]): { cat: ColItem[]; hung: ColItem[] } {
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-/** Giờ chi containing a clock hour (23:00 belongs to Tý). */
-const chiOfHour = (h: number) => Math.floor(((h + 1) % 24) / 2);
-
-const hourLabel = (h: number) => `${pad(h)}:00 – ${pad(h)}:59 · Giờ ${CHI[chiOfHour(h)]}`;
+/** Label for a giờ chi with its two-hour band, e.g. "Giờ Mão (05:00 – 06:59)". */
+const hourLabel = (chi: number) =>
+  `Giờ ${CHI[chi]} (${pad((chi * 2 + 23) % 24)}:00 – ${pad((chi * 2) % 24)}:59)`;
 
 /**
  * Birth-place time zones as IANA identifiers — daylight saving time is
@@ -190,7 +189,8 @@ function computeResult(f: FormState) {
   if (!nx || nx < 1900 || nx > 2100) {
     return { error: 'Nhập năm xem hợp lệ (1900–2100).' } as const;
   }
-  const vn = toVietnamTime(d, m, y, f.hour, TIMEZONES[f.tzIndex]);
+  // f.hour is a giờ chi index; convert via the band's midpoint clock hour.
+  const vn = toVietnamTime(d, m, y, (f.hour * 2) % 24, TIMEZONES[f.tzIndex]);
   const converted =
     f.tzIndex !== 0
       ? `Nơi sinh ${fmtOffset(vn.offsetUsed)} → giờ Việt Nam: ${vn.day}/${vn.month}/${vn.year} · Giờ ${CHI[vn.hourChi]}`
@@ -269,7 +269,7 @@ export default function TuViView({ initial }: { initial: { day: number; month: n
         <Dropdown
           title="Giờ sinh"
           accessibilityLabel="Chọn giờ sinh"
-          options={Array.from({ length: 24 }, (_, h) => hourLabel(h))}
+          options={Array.from({ length: 12 }, (_, chi) => hourLabel(chi))}
           value={hour}
           onChange={(i) => set('hour', i)}
           s={s}
@@ -531,13 +531,6 @@ function Board({ chart, name, s, theme }: { chart: TuViChart; name: string; s: a
         s={s}
         theme={theme}
       />
-      <Text style={s.note}>
-        Chạm vào một cung để xem đầy đủ các sao. Số ở góc phải mỗi cung là tuổi khởi đại vận (10
-        năm). Trong mỗi cung, phụ tinh xếp hai cột:
-        trái là cát tinh, phải là hung tinh; màu chữ theo ngũ hành của sao (Kim vàng đồng · Mộc xanh
-        lá · Thủy xanh dương · Hỏa đỏ · Thổ nâu). Ngày giờ sinh nhập theo dương lịch tại nơi sinh —
-        lá số tự quy đổi về giờ Việt Nam (GMT+7), kể cả giờ mùa hè (DST) theo từng năm.
-      </Text>
     </View>
   );
 }
