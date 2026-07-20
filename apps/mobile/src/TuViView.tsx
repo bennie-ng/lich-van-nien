@@ -157,44 +157,87 @@ const GRID_POS: Record<number, [number, number]> = {
   2: [3, 0], 1: [3, 1], 0: [3, 2], 11: [3, 3],
 };
 
+interface FormState {
+  name: string;
+  day: string;
+  month: string;
+  year: string;
+  hour: number;
+  tzIndex: number;
+  gender: Gender;
+  namXem: string;
+}
+
+/**
+ * Module-level store so the form and the last computed chart survive
+ * navigating away from the tab (the view unmounts on tab switch).
+ */
+const memory: { form: FormState | null; submitted: FormState | null } = {
+  form: null,
+  submitted: null,
+};
+
+function computeResult(f: FormState) {
+  const d = parseInt(f.day, 10);
+  const m = parseInt(f.month, 10);
+  const y = parseInt(f.year, 10);
+  if (!d || !m || !y || m < 1 || m > 12 || d < 1 || d > 31 || y < 1900 || y > 2100) {
+    return { error: 'Nhập ngày sinh dương lịch hợp lệ (1900–2100).' } as const;
+  }
+  const maxDay = new Date(y, m, 0).getDate();
+  if (d > maxDay) return { error: `Tháng ${m}/${y} chỉ có ${maxDay} ngày.` } as const;
+  const nx = parseInt(f.namXem, 10);
+  if (!nx || nx < 1900 || nx > 2100) {
+    return { error: 'Nhập năm xem hợp lệ (1900–2100).' } as const;
+  }
+  const vn = toVietnamTime(d, m, y, f.hour, TIMEZONES[f.tzIndex]);
+  const converted =
+    f.tzIndex !== 0
+      ? `Nơi sinh ${fmtOffset(vn.offsetUsed)} → giờ Việt Nam: ${vn.day}/${vn.month}/${vn.year} · Giờ ${CHI[vn.hourChi]}`
+      : null;
+  return {
+    chart: laSoTuVi(vn.day, vn.month, vn.year, vn.hourChi, f.gender, nx),
+    converted,
+    name: f.name,
+  } as const;
+}
+
 export default function TuViView({ initial }: { initial: { day: number; month: number; year: number } }) {
   const { theme } = useTheme();
   const { width } = useWindowDimensions();
   const isWide = width >= 900;
   const s = useMemo(() => styles(theme, isWide), [theme, isWide]);
 
-  const [name, setName] = useState('');
-  const [day, setDay] = useState(String(initial.day));
-  const [month, setMonth] = useState(String(initial.month));
-  const [year, setYear] = useState(String(initial.year));
-  const [hour, setHour] = useState(0);
-  const [tzIndex, setTzIndex] = useState(0);
-  const [gender, setGender] = useState<Gender>('nam');
-  const [namXem, setNamXem] = useState(String(new Date().getFullYear()));
+  const [form, setForm] = useState<FormState>(
+    () =>
+      memory.form ?? {
+        name: '',
+        day: String(initial.day),
+        month: String(initial.month),
+        year: String(initial.year),
+        hour: 0,
+        tzIndex: 0,
+        gender: 'nam',
+        namXem: String(new Date().getFullYear()),
+      },
+  );
+  const [submitted, setSubmitted] = useState<FormState | null>(memory.submitted);
 
-  const result = useMemo(() => {
-    const d = parseInt(day, 10);
-    const m = parseInt(month, 10);
-    const y = parseInt(year, 10);
-    if (!d || !m || !y || m < 1 || m > 12 || d < 1 || d > 31 || y < 1900 || y > 2100) {
-      return { error: 'Nhập ngày sinh dương lịch hợp lệ (1900–2100).' } as const;
-    }
-    const maxDay = new Date(y, m, 0).getDate();
-    if (d > maxDay) return { error: `Tháng ${m}/${y} chỉ có ${maxDay} ngày.` } as const;
-    const nx = parseInt(namXem, 10);
-    if (!nx || nx < 1900 || nx > 2100) {
-      return { error: 'Nhập năm xem hợp lệ (1900–2100).' } as const;
-    }
-    const vn = toVietnamTime(d, m, y, hour, TIMEZONES[tzIndex]);
-    const converted =
-      tzIndex !== 0
-        ? `Nơi sinh ${fmtOffset(vn.offsetUsed)} → giờ Việt Nam: ${vn.day}/${vn.month}/${vn.year} · Giờ ${CHI[vn.hourChi]}`
-        : null;
-    return {
-      chart: laSoTuVi(vn.day, vn.month, vn.year, vn.hourChi, gender, nx),
-      converted,
-    } as const;
-  }, [day, month, year, hour, tzIndex, gender, namXem]);
+  const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
+    setForm((f) => {
+      const next = { ...f, [key]: value };
+      memory.form = next;
+      return next;
+    });
+
+  const submit = () => {
+    memory.form = form;
+    memory.submitted = form;
+    setSubmitted(form);
+  };
+
+  const result = useMemo(() => (submitted ? computeResult(submitted) : null), [submitted]);
+  const { name, day, month, year, hour, tzIndex, gender, namXem } = form;
 
   return (
     <ScrollView
@@ -211,15 +254,15 @@ export default function TuViView({ initial }: { initial: { day: number; month: n
         <TextInput
           style={[s.input, { marginBottom: theme.space.md }]}
           value={name}
-          onChangeText={setName}
+          onChangeText={(v) => set('name', v)}
           placeholder="Nguyễn Văn A"
           placeholderTextColor={theme.color.text.disabled}
         />
         <Text style={s.sectionLabel}>Ngày sinh — dương lịch</Text>
         <View style={s.inputRow}>
-          <Field label="Ngày" value={day} onChange={setDay} s={s} />
-          <Field label="Tháng" value={month} onChange={setMonth} s={s} />
-          <Field label="Năm" value={year} onChange={setYear} wide s={s} />
+          <Field label="Ngày" value={day} onChange={(v) => set('day', v)} s={s} />
+          <Field label="Tháng" value={month} onChange={(v) => set('month', v)} s={s} />
+          <Field label="Năm" value={year} onChange={(v) => set('year', v)} wide s={s} />
         </View>
 
         <Text style={s.fieldLabel}>Giờ sinh (giờ tại nơi sinh)</Text>
@@ -228,7 +271,7 @@ export default function TuViView({ initial }: { initial: { day: number; month: n
           accessibilityLabel="Chọn giờ sinh"
           options={Array.from({ length: 24 }, (_, h) => hourLabel(h))}
           value={hour}
-          onChange={setHour}
+          onChange={(i) => set('hour', i)}
           s={s}
           theme={theme}
         />
@@ -239,7 +282,7 @@ export default function TuViView({ initial }: { initial: { day: number; month: n
           accessibilityLabel="Chọn múi giờ nơi sinh"
           options={TIMEZONES.map((t) => t.label)}
           value={tzIndex}
-          onChange={setTzIndex}
+          onChange={(i) => set('tzIndex', i)}
           s={s}
           theme={theme}
         />
@@ -250,7 +293,7 @@ export default function TuViView({ initial }: { initial: { day: number; month: n
             <TextInput
               style={s.input}
               value={namXem}
-              onChangeText={(t) => setNamXem(t.replace(/[^0-9]/g, ''))}
+              onChangeText={(t) => set('namXem', t.replace(/[^0-9]/g, ''))}
               keyboardType="number-pad"
               maxLength={4}
             />
@@ -261,7 +304,7 @@ export default function TuViView({ initial }: { initial: { day: number; month: n
               {(['nam', 'nu'] as const).map((g) => (
                 <Pressable
                   key={g}
-                  onPress={() => setGender(g)}
+                  onPress={() => set('gender', g)}
                   style={[s.segment, gender === g && s.segmentActive]}
                 >
                   <Text style={[s.segmentText, gender === g && s.segmentTextActive]}>
@@ -272,17 +315,24 @@ export default function TuViView({ initial }: { initial: { day: number; month: n
             </View>
           </View>
         </View>
-        {'converted' in result && result.converted && (
+        <Pressable style={s.submitBtn} onPress={submit} accessibilityRole="button">
+          <Text style={s.submitText}>Lập lá số</Text>
+        </Pressable>
+        {result && 'converted' in result && result.converted && (
           <Text style={s.convertedNote}>{result.converted}</Text>
         )}
       </View>
 
-      {'error' in result ? (
+      {result === null ? (
+        <View style={s.card}>
+          <Text style={s.hint}>Nhập thông tin sinh và bấm "Lập lá số" để xem lá số.</Text>
+        </View>
+      ) : 'error' in result ? (
         <View style={s.card}>
           <Text style={s.error}>{result.error}</Text>
         </View>
       ) : (
-        <Board chart={result.chart} name={name} s={s} theme={theme} />
+        <Board chart={result.chart} name={result.name} s={s} theme={theme} />
       )}
     </ScrollView>
   );
@@ -687,6 +737,15 @@ const styles = (t: Theme, isWide: boolean) =>
     segmentText: { ...t.type.label, color: t.color.text.tertiary } as object,
     segmentTextActive: { color: t.color.text.accent },
     error: { ...t.type.label, color: t.color.state.danger, textAlign: 'center' } as object,
+    hint: { ...t.type.body, color: t.color.text.secondary, textAlign: 'center' } as object,
+    submitBtn: {
+      backgroundColor: t.color.accent.solid,
+      borderRadius: t.radius.button,
+      paddingVertical: t.space.md + 2,
+      alignItems: 'center',
+      marginTop: t.space.lg,
+    },
+    submitText: { ...t.type.headline, color: t.color.text.onAccent } as object,
 
     boardWrap: { maxWidth: isWide ? 860 : 560, width: '100%', alignSelf: 'center' },
     board: {
