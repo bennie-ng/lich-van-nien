@@ -108,17 +108,23 @@ function wallInZone(utcMs: number, tz: string): number {
   return Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour, +parts.minute);
 }
 
+export type TimeMethod = 'diaPhuong' | 'quyDoiVN';
+
 /**
- * Convert a local birth datetime (mid-hour) at the birth place to
- * Vietnam time (GMT+7), where the lunar calendar and giờ chi are
- * defined. DST at the birth place and date is resolved via Intl.
+ * Resolve the birth datetime (mid-hour, local clock at the birth place)
+ * for chart computation. DST at the birth place/date is found via Intl.
+ *
+ * - 'diaPhuong' (default, majority school): keep the local date and giờ
+ *   chi, only stripping any daylight-saving offset back to standard time.
+ * - 'quyDoiVN': convert the instant to Vietnam time (GMT+7).
  */
-function toVietnamTime(
+function toChartTime(
   d: number,
   m: number,
   y: number,
   hour: number,
   zone: { tz: string; off: number },
+  method: TimeMethod,
 ) {
   const localWall = Date.UTC(y, m - 1, d, hour, 30);
   let utcMs = localWall - zone.off * 60000;
@@ -131,14 +137,20 @@ function toVietnamTime(
     utcMs = localWall - zone.off * 60000; // no tz data: fixed standard offset
   }
   const offsetUsed = Math.round((localWall - utcMs) / 60000);
-  const vn = new Date(utcMs + 420 * 60000);
-  const minutes = vn.getUTCHours() * 60 + vn.getUTCMinutes();
+  const dstExtra = offsetUsed - zone.off;
+  const basis =
+    method === 'quyDoiVN'
+      ? utcMs + 420 * 60000 // wall time in Vietnam
+      : localWall - dstExtra * 60000; // local standard time
+  const t = new Date(basis);
+  const minutes = t.getUTCHours() * 60 + t.getUTCMinutes();
   return {
-    day: vn.getUTCDate(),
-    month: vn.getUTCMonth() + 1,
-    year: vn.getUTCFullYear(),
+    day: t.getUTCDate(),
+    month: t.getUTCMonth() + 1,
+    year: t.getUTCFullYear(),
     hourChi: Math.floor(((minutes + 60) % 1440) / 120),
     offsetUsed,
+    dstExtra,
   };
 }
 
@@ -163,9 +175,15 @@ interface FormState {
   year: string;
   hour: number;
   tzIndex: number;
+  method: TimeMethod;
   gender: Gender;
   namXem: string;
 }
+
+const METHODS: ReadonlyArray<{ label: string; value: TimeMethod }> = [
+  { label: 'Giờ địa phương nơi sinh (khuyên dùng)', value: 'diaPhuong' },
+  { label: 'Quy đổi về giờ Việt Nam (GMT+7)', value: 'quyDoiVN' },
+];
 
 /**
  * Module-level store so the form and the last computed chart survive
@@ -189,14 +207,16 @@ function computeResult(f: FormState) {
   if (!nx || nx < 1900 || nx > 2100) {
     return { error: 'Nhập năm xem hợp lệ (1900–2100).' } as const;
   }
-  // f.hour is a giờ chi index; convert via the band's midpoint clock hour.
-  const vn = toVietnamTime(d, m, y, (f.hour * 2) % 24, TIMEZONES[f.tzIndex]);
-  const converted =
-    f.tzIndex !== 0
-      ? `Nơi sinh ${fmtOffset(vn.offsetUsed)} → giờ Việt Nam: ${vn.day}/${vn.month}/${vn.year} · Giờ ${CHI[vn.hourChi]}`
-      : null;
+  // f.hour is a giờ chi index; resolve via the band's midpoint clock hour.
+  const t = toChartTime(d, m, y, (f.hour * 2) % 24, TIMEZONES[f.tzIndex], f.method);
+  let converted: string | null = null;
+  if (f.method === 'quyDoiVN' && f.tzIndex !== 0) {
+    converted = `Nơi sinh ${fmtOffset(t.offsetUsed)} → giờ Việt Nam: ${t.day}/${t.month}/${t.year} · Giờ ${CHI[t.hourChi]}`;
+  } else if (f.method === 'diaPhuong' && t.dstExtra !== 0) {
+    converted = `Đã trừ giờ mùa hè (DST): tính theo giờ chuẩn ${t.day}/${t.month}/${t.year} · Giờ ${CHI[t.hourChi]}`;
+  }
   return {
-    chart: laSoTuVi(vn.day, vn.month, vn.year, vn.hourChi, f.gender, nx),
+    chart: laSoTuVi(t.day, t.month, t.year, t.hourChi, f.gender, nx),
     converted,
     name: f.name,
   } as const;
@@ -217,6 +237,7 @@ export default function TuViView({ initial }: { initial: { day: number; month: n
         year: String(initial.year),
         hour: 0,
         tzIndex: 0,
+        method: 'diaPhuong',
         gender: 'nam',
         namXem: String(new Date().getFullYear()),
       },
@@ -286,6 +307,21 @@ export default function TuViView({ initial }: { initial: { day: number; month: n
           s={s}
           theme={theme}
         />
+
+        {tzIndex !== 0 && (
+          <>
+            <Text style={s.fieldLabel}>Cách tính giờ sinh</Text>
+            <Dropdown
+              title="Cách tính giờ sinh"
+              accessibilityLabel="Chọn cách tính giờ sinh"
+              options={METHODS.map((m) => m.label)}
+              value={METHODS.findIndex((m) => m.value === form.method)}
+              onChange={(i) => set('method', METHODS[i].value)}
+              s={s}
+              theme={theme}
+            />
+          </>
+        )}
 
         <View style={s.bottomRow}>
           <View style={{ flex: 1 }}>
